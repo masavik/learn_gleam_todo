@@ -1,7 +1,7 @@
 import envoy
 import gleam/erlang/process
 
-// import gleam/io
+import gleam/http
 import gleam/result
 import mist
 import wisp.{type Request, type Response}
@@ -16,14 +16,53 @@ fn middleware(req: Request, handler: fn(Request) -> Response) -> Response {
   handler(req)
 }
 
+fn get_todos_handler() -> Response {
+  wisp.ok()
+  |> wisp.string_body("GET Todos")
+}
+
+fn post_todos_handler() -> Response {
+  wisp.created()
+}
+
+fn todos_handler(req: Request) -> Response {
+  case req.method {
+    http.Get -> get_todos_handler()
+    http.Post -> post_todos_handler()
+    _ -> wisp.method_not_allowed([http.Get, http.Post])
+  }
+}
+
+fn get_todo_handler(id: String) -> Response {
+  wisp.ok()
+  |> wisp.string_body("GET Todo with ID: " <> id)
+}
+
+fn delete_todo_handler(_id: String) -> Response {
+  wisp.no_content()
+}
+
+fn todo_handler(req: Request, id: String) -> Response {
+  case req.method {
+    http.Get -> get_todo_handler(id)
+    http.Delete -> delete_todo_handler(id)
+    _ -> wisp.method_not_allowed([http.Get, http.Delete])
+  }
+}
+
 fn handler(req: Request) -> Response {
   use _ <- middleware(req)
 
-  wisp.ok()
-  |> wisp.string_body("Hellow from Wisp and Gleam")
+  case wisp.path_segments(req) {
+    ["todos"] -> todos_handler(req)
+    ["todo", id] -> todo_handler(req, id)
+    _ -> wisp.not_found()
+  }
+  // wisp.ok()
+  // |> wisp.string_body("Hello from Wisp and Gleam")
 }
 
-pub fn main() {
+pub fn main() -> Nil {
   // The following statement configures the logger
   wisp.configure_logger()
 
@@ -35,7 +74,7 @@ pub fn main() {
   let assert Ok(_) =
     wisp_mist.handler(handler, secret)
     |> mist.new
-    |> mist.port(8080)
+    |> mist.port(18_080)
     |> mist.start
 
   process.sleep_forever()

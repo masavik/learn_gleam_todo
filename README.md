@@ -3,9 +3,12 @@
 [![Package Version](https://img.shields.io/hexpm/v/learn_gleam_todo)](https://hex.pm/packages/learn_gleam_todo)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/learn_gleam_todo/)
 
+All the code written in this project is from [here](https://blog.andreyfadeev.com/p/gleam-web-application-development-tutorial).
+
 ```sh
 gleam add learn_gleam_todo@1
 ```
+
 ```gleam
 import learn_gleam_todo
 
