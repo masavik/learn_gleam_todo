@@ -73,9 +73,36 @@ pub fn main() -> Nil {
 
   let assert Ok(_) =
     wisp_mist.handler(handler, secret)
+    // pub fn handler(
+    //   handler: fn(request.Request(wisp.Connection)) -> response.Response(
+    //     wisp.Body,
+    //   ),
+    //   secret_key_base: String,
+    // ) -> fn(request.Request(mist.Connection)) -> response.Response(
+    //   mist.ResponseData,
+    // )
     |> mist.new
+    // pub fn new(
+    //   handler: fn(request.Request(in)) -> response.Response(out),
+    // ) -> Builder(in, out)
     |> mist.port(18_080)
+    // pub fn port(
+    //   builder: Builder(in, out),
+    //   port: Int,
+    // ) -> Builder(in, out)
     |> mist.start
-
+  // pub fn start(
+  //   builder: Builder(Connection, ResponseData),
+  // ) -> Result(
+  //   actor.Started(static_supervisor.Supervisor),
+  //   actor.StartError,
+  // )
+  // `Connection` is a Re-exported type that represents the default `Request` body type. See
+  // `mist.read_body` to convert this type into a `BitString`. The `Connection`
+  // also holds some additional information about the request. Currently, the
+  // only useful field is `client_ip` which is a `Result` with a tuple of
+  // integers representing the IPv4 address.
+  // pub type Connection =
+  //   InternalConnection
   process.sleep_forever()
 }
